@@ -38,9 +38,14 @@ public class ProductController {
         Product update = productService.updateProductById(id,product);
         return ResponseEntity.status(HttpStatus.OK).body(update);
     }
-    @DeleteMapping("/{id}")
+    @DeleteMapping("/{Id}")
     public ResponseEntity<Map<String,String>> deleteProductById(@PathVariable Long id){
             productService.deleteProductById(id);
         return ResponseEntity.ok(Map.of("message" , "Product deleted successfully"));
+    }
+    @PutMapping("/{productId}/categories/{categoryId}")
+    public ResponseEntity<Product> assignProduct(@PathVariable Long productId, @PathVariable Long categoryId){
+        Product product = productService.assignCategory(productId,categoryId);
+        return ResponseEntity.ok(product);
     }
 }
