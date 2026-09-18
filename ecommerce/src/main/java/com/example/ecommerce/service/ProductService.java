@@ -43,4 +43,11 @@ public class ProductService {
         product.getCategories().add(category);
         return productRepository.save(product);
     }
+    public Product removeCategory(Long productId, Long categoryId){
+        Product product =productRepository.findById(productId).orElseThrow();
+        Category category = categoryRepository.findById(categoryId).orElseThrow();
+        product.getCategories().remove(category);
+        return productRepository.save(product);
+    }
+
 }
