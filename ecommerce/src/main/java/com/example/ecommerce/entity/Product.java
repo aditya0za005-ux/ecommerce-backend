@@ -1,5 +1,6 @@
 package com.example.ecommerce.entity;
 
+import com.fasterxml.jackson.annotation.JsonIgnore;
 import jakarta.persistence.*;
 import lombok.Getter;
 import lombok.Setter;
@@ -29,5 +30,6 @@ public class Product {
     private Set<Category> categories = new HashSet<>();
 
     @OneToMany(mappedBy = "product")
+    @JsonIgnore
     private Set<CartItem> cartItems = new HashSet<>();
 }
