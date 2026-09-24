@@ -1,13 +1,12 @@
 package com.example.ecommerce.service;
 
 import com.example.ecommerce.entity.*;
-import com.example.ecommerce.repository.CartRepository;
-import com.example.ecommerce.repository.OrderItemRepository;
-import com.example.ecommerce.repository.OrderRepository;
-import com.example.ecommerce.repository.UserRepository;
+import com.example.ecommerce.repository.*;
 import org.springframework.stereotype.Service;
+import org.springframework.transaction.annotation.Transactional;
 
 import java.math.BigDecimal;
+import java.util.List;
 
 @Service
 public class OrderService {
@@ -15,14 +14,16 @@ public class OrderService {
     private final OrderItemRepository orderItemRepository;
     private final UserRepository userRepository;
     private final CartRepository cartRepository;
+    private final CartItemRepository cartItemRepository;
 
-    public OrderService(OrderRepository orderRepository, OrderItemRepository orderItemRepository, UserRepository userRepository, CartRepository cartRepository) {
+    public OrderService(OrderRepository orderRepository, OrderItemRepository orderItemRepository, UserRepository userRepository, CartRepository cartRepository, CartItemRepository cartItemRepository) {
         this.orderRepository = orderRepository;
         this.orderItemRepository = orderItemRepository;
         this.userRepository = userRepository;
         this.cartRepository = cartRepository;
+        this.cartItemRepository = cartItemRepository;
     }
-
+    @Transactional
     public Order createOrder(Long userId){
         User user = userRepository.findById(userId).orElseThrow();
         Cart cart = cartRepository.findById(userId).orElseThrow();
@@ -55,8 +56,20 @@ public class OrderService {
 
         orderItemRepository.saveAll(order.getOrderItems());
 
-        cart.getCartItem().clear();
+        cartItemRepository.deleteByCartId(cart.getId());
+
 
         return order;
+    }
+    public List<Order> getOrderByUserId(Long userId){
+        return orderRepository.findByUserId(userId);
+    }
+    public Order getOrderById(Long orderId){
+        return orderRepository.findById(orderId).orElseThrow();
+    }
+    public Order updateOrderById(Long orderId, String status){
+        Order order = orderRepository.findById(orderId).orElseThrow();
+        order.setStatus(status);
+        return orderRepository.save(order);
     }
 }
